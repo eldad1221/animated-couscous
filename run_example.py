@@ -1,6 +1,6 @@
 import os
 from quickbelog import Log
-from awsvault import get_parameters, dump
+from awspstore import get_parameters, dump
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import os
 import uuid
 import unittest
-from awsvault import get_env_as_list, get_parameters
+from awspstore import get_env_as_list, get_parameters
 
 
 class UtilsTestCase(unittest.TestCase):
@@ -12,7 +12,7 @@ class UtilsTestCase(unittest.TestCase):
         os.environ[var_name] = value
         valid_result = ['a', 'B', '1', '2']
         self.assertEqual(valid_result, get_env_as_list(key=var_name))
-        self.assertEqual(valid_result, get_env_as_list(key=f'{uuid.uuid4()}', default=value))
+        self.assertEqual(valid_result, get_env_as_list(key=f'{uuid.uuid4()}', default=valid_result.copy()))
 
     def test_get_parameters(self):
         results = get_parameters(path='dev')

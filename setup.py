@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(
-    name="aws-vault",
+    name="awspstore",
     version="1.0.0",
     author="Eldad Bishari",
     author_email="eldad@1221tlv.org",
@@ -16,6 +16,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'boto3==1.20.41',
+        'quickbelog~=1.0.0',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

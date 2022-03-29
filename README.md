@@ -1,5 +1,5 @@
-# AWS Vault
-Parameters vault for your backend software project using AWS Parameter Store
+# AWS Parameter Store
+Parameters store (vault) for your backend software project using AWS Parameter Store
 
 ### Why AWS Parameter Store
 Usually in every backend project there is a use of environment variables for holding values that can differ for each environment or need to be change from time to time.
@@ -24,7 +24,7 @@ Here for example we have two parameters for `dev` environment and two for stage.
 
 To load parameters for `dev` environment see this code snippet
 
-    from awsvault import get_parameters
+    from awspstore import get_parameters
     
     get_parameters(
         path='dev',  # Parameters path
@@ -34,7 +34,7 @@ To load parameters for `dev` environment see this code snippet
 
 Parameters dump into standard output. Notice tha the password is masked, by default every parameter that it's name suggesting that it contains a password or other secret will be masked.  
 
-    DEBUG	__init__.py(54) method: dump 	 DB_HOST: my.owsome-db.net
+    DEBUG	__init__.py(54) method: dump 	 DB_HOST: my.awesome-db.net
     DEBUG	__init__.py(54) method: dump 	 DB_USER: db_dev_user
     DEBUG	__init__.py(54) method: dump 	 DB_PWD: ***********
 
