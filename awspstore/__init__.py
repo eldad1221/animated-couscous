@@ -8,6 +8,8 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 for log_name in ['boto', 'boto3', 'botocore', 's3transfer', 'urllib3']:
     logging.getLogger(log_name).setLevel(logging.WARNING)
 
+ssm_client = boto3.client('ssm')
+
 
 def get_env_as_list(key: str, default: list = None) -> list:
     values = os.getenv(key)
@@ -22,8 +24,7 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
     if not path.startswith('/'):
         path = f'/{path}'
     try:
-        ssm = boto3.client('ssm')
-        paginator = ssm.get_paginator('describe_parameters')
+        paginator = ssm_client.get_paginator('describe_parameters')
         pager = paginator.paginate(
             ParameterFilters=[
                 dict(Key="Path", Option="Recursive", Values=[path])
@@ -31,11 +32,8 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
         )
         parameters_data = {}
         for page in pager:
-            for p in page['Parameters']:
-                p_path = str(p['Name'])
-                p_name = p_path.replace(f'{path}/', '').replace('/', '_').upper()
-                p_data = ssm.get_parameter(Name=p_path, WithDecryption=True)
-                parameters_data[p_name] = p_data.get('Parameter', {}).get('Value')
+            parameters = [p_data['Name'] for p_data in page['Parameters'] if 'Name' in p_data]
+            parameters_data.update(_get_parameters_value(parameters=parameters, path=path))
         Log.info(f'Retrieved {len(parameters_data)} variables from Parameter Store from {path}.')
         if dump_parameters:
             dump(parameters_data)
@@ -45,6 +43,16 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
         return parameters_data
     except Exception:
         Log.exception(f'Can not access AWS parameter store, path: {path}.')
+
+
+def _get_parameters_value(parameters: list, path: str) -> dict:
+    result = {}
+    parameters_data = ssm_client.get_parameters(Names=parameters, WithDecryption=True)
+    for p in parameters_data['Parameters']:
+        p_path = str(p['Name'])
+        p_name = p_path.replace(f'{path}/', '').replace('/', '_').upper()
+        result[p_name] = p.get('Value', '')
+    return result
 
 
 def dump(d: dict):
