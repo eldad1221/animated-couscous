@@ -33,7 +33,7 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
         parameters_data = {}
         for page in pager:
             parameters = [p_data['Name'] for p_data in page['Parameters'] if 'Name' in p_data]
-            parameters_data.update(_get_parameters_value(parameters=parameters, path=path))
+            parameters_data.update(get_parameters_value(parameters=parameters, path=path))
         Log.info(f'Retrieved {len(parameters_data)} variables from Parameter Store from {path}.')
         if dump_parameters:
             dump(parameters_data)
@@ -45,7 +45,7 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
         Log.exception(f'Can not access AWS parameter store, path: {path}.')
 
 
-def _get_parameters_value(parameters: list, path: str) -> dict:
+def get_parameters_value(parameters: list, path: str) -> dict:
     result = {}
     parameters_data = ssm_client.get_parameters(Names=parameters, WithDecryption=True)
     for p in parameters_data['Parameters']:
@@ -57,7 +57,7 @@ def _get_parameters_value(parameters: list, path: str) -> dict:
 
 def dump(d: dict):
     for k, v in sorted(d.items()):
-        if _is_secret(k):
+        if is_secret(k):
             v = '*' * len(v)
         Log.debug(f'{k}: {v}')
 
@@ -72,7 +72,7 @@ AWS_VAULT_SECRET_WORDS = get_env_as_list(
 )
 
 
-def _is_secret(s: str) -> bool:
+def is_secret(s: str) -> bool:
     s_up = s.upper().strip()
     for word in AWS_VAULT_SECRET_WORDS:
         if word in s_up:

@@ -1,7 +1,7 @@
 import os
 import uuid
 import unittest
-from awspstore import get_env_as_list, get_parameters, _is_secret
+from awspstore import get_env_as_list, get_parameters, is_secret
 
 
 class UtilsTestCase(unittest.TestCase):
@@ -22,7 +22,7 @@ class UtilsTestCase(unittest.TestCase):
             'ABC_SECRET_123': False,
         }
         for key, expected_value in test_cases.items():
-            self.assertEqual(True, _is_secret(key) == expected_value, msg=f'{key}')
+            self.assertEqual(True, is_secret(key) == expected_value, msg=f'{key}')
 
     def test_get_env_as_list(self):
         var_name = f'var_{uuid.uuid4()}'
