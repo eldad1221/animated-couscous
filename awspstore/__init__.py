@@ -45,21 +45,35 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
         Log.exception(f'Can not access AWS parameter store, path: {path}.')
 
 
-def get_parameters_value(parameters: list, path: str) -> dict:
+def get_parameters_value(
+        parameters: list, path: str,
+        update_environ: bool = False, dump_parameters: bool = False) -> dict:
     result = {}
     parameters_data = ssm_client.get_parameters(Names=parameters, WithDecryption=True)
     for p in parameters_data['Parameters']:
         p_path = str(p['Name'])
         p_name = p_path.replace(f'{path}/', '').replace('/', '_').upper()
-        result[p_name] = p.get('Value', '')
+        value = p.get('Value', '')
+        result[p_name] = value
+
+        if update_environ:
+            os.environ[p_name] = value
+
+        if dump_parameters:
+            log_parameter(k=p_name, v=value)
+
     return result
 
 
 def dump(d: dict):
     for k, v in sorted(d.items()):
-        if is_secret(k):
-            v = '*' * len(v)
-        Log.debug(f'{k}: {v}')
+        log_parameter(k=k, v=v)
+
+
+def log_parameter(k: str, v: str):
+    if is_secret(k):
+        v = '*' * len(v)
+    Log.debug(f'{k}: {v}')
 
 
 AWS_VAULT_SECRET_SUFFIXES = get_env_as_list(
