@@ -41,8 +41,9 @@ def get_parameters(path: str = '/', update_environ: bool = True, dump_parameters
             if parameters_data is not None and isinstance(parameters_data, dict):
                 os.environ.update(parameters_data)
         return parameters_data
-    except Exception:
+    except Exception as e:
         Log.exception(f'Can not access AWS parameter store, path: {path}.')
+        raise e
 
 
 def get_parameters_value(
