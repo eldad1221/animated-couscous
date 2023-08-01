@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="awspstore",
-    version="1.3.0",
+    version="1.4.0",
     author="Eldad Bishari",
     author_email="eldad@1221tlv.org",
     description="Vault for your software project using AWS Parameter Store",

@@ -66,6 +66,24 @@ def get_parameters_value(
     return result
 
 
+def get_parameters_by_path(path: str, env_vars: list, update_environ: bool = False, dump_parameters: bool = False):
+    params = {}
+    chunk_size = 10
+    for i in range(0, len(env_vars), chunk_size):
+        x = i
+        vars_to_load = env_vars[x:x + chunk_size]
+        params.update(
+            get_parameters_value(
+                path=f'/{path}',
+                parameters=[f'/{path}/{p_name}' for p_name in vars_to_load],
+                update_environ=update_environ,
+                dump_parameters=dump_parameters
+            )
+        )
+    Log.debug(f'Path {path}, loaded {len(params)} variables.')
+    return params
+
+
 def dump(d: dict):
     for k, v in sorted(d.items()):
         log_parameter(k=k, v=v)
