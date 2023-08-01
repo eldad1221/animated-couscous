@@ -66,16 +66,16 @@ def get_parameters_value(
     return result
 
 
-def get_parameters_by_path(path: str, env_vars: list, update_environ: bool = False, dump_parameters: bool = False):
+def get_parameters_by_path(path: str, parameters: list, update_environ: bool = False, dump_parameters: bool = False):
     params = {}
     chunk_size = 10
-    for i in range(0, len(env_vars), chunk_size):
+    for i in range(0, len(parameters), chunk_size):
         x = i
-        vars_to_load = env_vars[x:x + chunk_size]
+        parameters_to_load = parameters[x:x + chunk_size]
         params.update(
             get_parameters_value(
                 path=f'/{path}',
-                parameters=[f'/{path}/{p_name}' for p_name in vars_to_load],
+                parameters=[f'/{path}/{p_name}' for p_name in parameters_to_load],
                 update_environ=update_environ,
                 dump_parameters=dump_parameters
             )
