@@ -9,9 +9,11 @@ class UtilsTestCase(unittest.TestCase):
     def test_is_secret(self):
         test_cases = {
             'ABC_DEF_KEY': True,
+            'ABC_DEF-KEY': True,
             'ABC_DEF_KEYS': True,
             'ABC_ACCESS_KEY_123': True,
             'ABC_123_TOKEN': True,
+            'ABC_123-TOKEN': True,
             'ABC_123_PWD': True,
             'ABC_PWD_123': True,
             'ABC_PASSWORD_123': True,

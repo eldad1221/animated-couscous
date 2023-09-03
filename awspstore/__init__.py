@@ -106,7 +106,7 @@ AWS_VAULT_SECRET_WORDS = get_env_as_list(
 
 
 def is_secret(s: str) -> bool:
-    s_up = s.upper().strip()
+    s_up = s.upper().strip().replace('-', '_')
     for word in AWS_VAULT_SECRET_WORDS:
         if word in s_up:
             return True
